@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="专业网站设计与Web应用开发服务">
+  <title>网站设计与Web应用 | 专业解决方案</title>
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #f8f9fa;
+      --border-color: #dee2e6;
+      --text-color: #333;
+      --hover-color: #e9ecef;
+      --active-color: #dee2e6;
+      --footer-bg: #2c3e50;
+      --footer-text: #dfe6e9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background-color: var(--secondary-color);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      width: 150px;
+      height: 50px;
+      background-color: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      letter-spacing: 1px;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex: 1;
+      margin-left: 2rem;
+    }
+
+    .nav-menu {
+  display: flex;
+  gap: 3.5rem; /* 原来 2rem，现在更宽松 */
+}
+
+.nav-menu span {
+  position: relative;
+  cursor: pointer;
+  padding: 0.6rem 1.5rem; /* 增加左右 padding，扩大点击区域 */
+  border-radius: 6px;
+  white-space: nowrap;
+  font-weight: 500;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.nav-menu span:hover {
+  color: var(--primary-color);
+  background-color: var(--hover-color); /* hover 时增加轻微背景色 */
+}
+
+.nav-menu span::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.nav-menu span:hover::after {
+  width: 100%;
+}
+
+
+    .search-container {
+      display: flex;
+      align-items: center;
+      margin-left: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .search-container input[type="text"] {
+      padding: 0.5rem 0.8rem;
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      min-width: 200px;
+      transition: all 0.2s;
+    }
+
+    .search-container input[type="text"]:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 4px rgba(52,152,219,0.4);
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: var(--secondary-color);
+      padding: 1.5rem 1rem;
+      border-right: 1px solid var(--border-color);
+    }
+
+    .sidebar h2 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      color: #555;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar li {
+      padding: 0.8rem 1rem;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .sidebar li:hover {
+      background-color: var(--hover-color);
+      transform: translateX(5px);
+    }
+
+    .sidebar li.active {
+      background-color: var(--active-color);
+      font-weight: bold;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .main {
+      flex: 1;
+      padding: 2rem;
+    }
+
+    .main h1 {
+      margin-bottom: 1.5rem;
+      color: #2c3e50;
+      font-size: 1.8rem;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    .product-display {
+      margin: 2rem 0;
+    }
+
+    .product-image {
+      width: 100%;
+      height: 400px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      margin: 2rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #6c757d;
+      border-radius: 12px;
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .product-image:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 10px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .views {
+      display: flex;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .view-box {
+      flex: 1;
+      height: 200px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #dfe9f3 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: #6c757d;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .view-box:hover {
+      transform: translateY(-5px) scale(1.03);
+      box-shadow: 0 8px 14px rgba(0, 0, 0, 0.15);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      background-color: var(--footer-bg);
+      margin-top: auto;
+    }
+
+    footer p {
+      color: var(--footer-text);
+      font-size: 0.9rem;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 992px) {
+      .container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .sidebar ul {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+      }
+      .sidebar li {
+        white-space: nowrap;
+        margin-right: 0.5rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .header-content {
+        flex-direction: column;
+        margin-left: 0;
+        width: 100%;
+        gap: 1rem;
+      }
+      .nav-container {
+        width: 100%;
+      }
+      .nav-menu {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .search-container {
+        width: 100%;
+        margin-left: 0;
+      }
+      .search-container input[type="text"] {
+        width: 100%;
+      }
+      .views {
+        flex-direction: column;
+      }
+      .view-box {
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" aria-label="公司标志">公司Logo</div>
+    <div class="header-content">
+      <div class="nav-container">
+        <nav class="nav-menu" aria-label="主导航">
+          <span role="button" tabindex="0">产品</span>
+          <span role="button" tabindex="0">信息</span>
+          <span role="button" tabindex="0">服务中心</span>
+          <span role="button" tabindex="0">社区</span>
+        </nav>
+      </div>
+      <div class="search-container">
+        <input type="text" placeholder="搜索产品..." aria-label="搜索产品">
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h2>产品分类</h2>
+      <ul id="product-list">
+        <li class="active" data-main="产品1主图" data-view1="产品1视图1" data-view2="产品1视图2" data-view3="产品1视图3">💻 网站设计解决方案</li>
+        <li data-main="产品2主图" data-view1="产品2视图1" data-view2="产品2视图2" data-view3="产品2视图3">⚙️ Web应用开发</li>
+        <li data-main="产品3主图" data-view1="产品3视图1" data-view2="产品3视图2" data-view3="产品3视图3">📱 移动端适配服务</li>
+        <li data-main="产品4主图" data-view1="产品4视图1" data-view2="产品4视图2" data-view3="产品4视图3">🛒 电子商务平台</li>
+        <li data-main="产品5主图" data-view1="产品5视图1" data-view2="产品5视图2" data-view3="产品5视图3">🎨 UI/UX设计服务</li>
+      </ul>
+    </aside>
+
+    <main class="main">
+      <h1>专业网站设计与Web应用开发</h1>
+      <p>我们提供全面的网站设计和Web应用开发服务，帮助企业打造出色的在线体验。</p>
+
+      <div class="product-display">
+        <div class="product-image" id="main-image">请从左侧选择产品查看详情</div>
+        <div class="views">
+          <div class="view-box" id="view1" aria-label="产品视图1">功能特点</div>
+          <div class="view-box" id="view2" aria-label="产品视图2">技术规格</div>
+          <div class="view-box" id="view3" aria-label="产品视图3">应用场景</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <p>&copy; 2023 网站设计与Web应用公司 | 公司动态与新闻</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const products = document.querySelectorAll('#product-list li');
+      const mainImage = document.getElementById('main-image');
+      const view1 = document.getElementById('view1');
+      const view2 = document.getElementById('view2');
+      const view3 = document.getElementById('view3');
+
+      updateProductDisplay(products[0]);
+
+      products.forEach(product => {
+        product.addEventListener('click', () => {
+          products.forEach(p => p.classList.remove('active'));
+          product.classList.add('active');
+          updateProductDisplay(product);
+        });
+
+        product.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            products.forEach(p => p.classList.remove('active'));
+            product.classList.add('active');
+            updateProductDisplay(product);
+          }
+        });
+      });
+
+      function updateProductDisplay(product) {
+        mainImage.textContent = product.dataset.main;
+        view1.textContent = product.dataset.view1;
+        view2.textContent = product.dataset.view2;
+        view3.textContent = product.dataset.view3;
+
+        [mainImage, view1, view2, view3].forEach(el => {
+          el.style.opacity = 0;
+          el.style.transform = "scale(0.95)";
+        });
+
+        setTimeout(() => {
+          [mainImage, view1, view2, view3].forEach(el => {
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            el.style.opacity = 1;
+            el.style.transform = "scale(1)";
+          });
+        }, 10);
+      }
+    });
+  </script>
+</body>
+</html>
