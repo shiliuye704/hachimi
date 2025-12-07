@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>job5 在线购物折扣</title>
+
+<style>
+  body { font-family: Arial; padding: 10px; }
+  input, select { margin: 3px 0; padding: 4px; }
+  table { border-collapse: collapse; margin-top: 10px; width: 100%; }
+  th, td { border: 1px solid #ccc; padding: 6px; }
+  #tips { background: #eef; padding: 10px; white-space: pre-line; }
+</style>
+
+<script>
+
+  /**
+   * document.write()
+   * 功能：向 HTML 页面“直接写入”内容，相当于插入 HTML 代码。
+   * 特点：在页面加载时执行，适合输出标题、提示区域。
+   */
+  document.write("<h1>XX电商 · 运营后台 · 订单录入与销售看板</h1>");
+  document.write("<p>欢迎使用内部工具，实时查看订单与销售情况。</p>");
+
+  // ===================== 全局优惠 + 加价温馨提示 =====================
+  document.write(`
+  <div style="padding:12px; border-left:5px solid #3aa0e6; margin:10px 0; font-size:15px;">
+    <strong>💡 温馨提示：本店当前可享受的优惠与加价政策如下：</strong>
+    <ul style="margin:8px 0 0 20px; line-height:1.6;">
+      <li>🎉 VIP 客户享受 <strong>9 折优惠</strong></li>
+      <li>⚡ 加急发货价格会 <strong>×1.1</strong></li>
+      <li>⏰ 每小时前 10 分钟再享 <strong>8.5 折</strong></li>
+    </ul>
+  </div>
+  `);
+
+  // ===================== 当前分钟动态活动提示 =====================
+  var nowForBanner = new Date();            // Date()：创建一个时间对象
+  var minuteForBanner = nowForBanner.getMinutes(); // getMinutes()：获取当前分钟（0–59）
+
+  if (minuteForBanner >= 0 && minuteForBanner <= 9) {
+    document.write(`
+      <div style="padding:12px; background:#fffbe6; border-left:5px solid #f4d06f; margin:10px 0; font-size:15px;">
+        ⏳ 当前为前 10 分钟！本单可额外享受 <strong>8.5 折</strong> 时段优惠！
+      </div>
+    `);
+  } else {
+    document.write(`
+      <div style="padding:12px; background:#f5f5f5; border-left:5px solid #ccc; margin:10px 0; font-size:15px;">
+        🕒 小贴士：每个整点前 10 分钟享受 8.5 折优惠，请留意下单时间～
+      </div>
+    `);
+  }
+
+var orderList = [];     
+var stuLastDigit = 3;   
+
+function showClock() {
+    var now = new Date();
+    var h = now.getHours();
+    var m = now.getMinutes();
+    var s = now.getSeconds();
+    var t = h + ":" + (m<10?"0"+m:m) + ":" + (s<10?"0"+s:s);
+
+    var note = (m <= 9) ? "（前10分钟：85折）" : "（无时间折扣）";
+
+    document.getElementById("clock").innerHTML = t + note;
+}
+setInterval(showClock, 1000);
+
+function addOrder() {
+
+    var name = document.getElementById("name").value;
+    var price = parseFloat(document.getElementById("price").value);
+    var qty = parseInt(document.getElementById("qty").value);
+    var vip = document.getElementById("vip").value === "true";
+    var urgent = document.getElementById("urgent").checked;
+
+    if (name == "") { alert("客户名称不能为空"); return; }
+    if (isNaN(price) || price <= 0) { alert("单价必须 > 0"); return; }
+    if (!Number.isInteger(qty) || qty <= 0) { alert("数量必须是整数且 > 0"); return; }
+
+    var now = new Date();
+    var minute = now.getMinutes();
+
+    // 基础价格
+    var baseTotal = price * qty;
+
+    // VIP（九折）
+    var afterVip = vip ? baseTotal * 0.9 : baseTotal;
+
+    // 加急（+10%）
+    var afterUrgent = urgent ? afterVip * 1.1 : afterVip;
+
+    // 时间折扣（前十分钟）
+    var hitTime = (minute <= 9);
+    var finalTotal = hitTime ? afterUrgent * 0.85 : afterUrgent;
+
+    // ★★★ 学号末位 3 的特殊逻辑
+    if (vip && finalTotal > 1000) {
+        finalTotal = finalTotal - 50;
+        if (finalTotal < 0) finalTotal = 0;
+    }
+
+    finalTotal = finalTotal.toFixed(2);
+
+    // 记录到数组（参考 jsc.html：push 记录订单）
+    orderList.push({
+        time: now.toLocaleString(),
+        name: name,
+        price: price,
+        qty: qty,
+        vip: vip,
+        urgent: urgent,
+        minute: minute,
+        final: finalTotal
+    });
+
+    // 显示计算过程（参考示例：tipsHtml +=）
+    var tipsHtml = "";
+    tipsHtml += "基础总价" + baseTotal.toFixed(2) + " 元\n";
+    tipsHtml += "VIP 折扣后= " + afterVip.toFixed(2) + " 元\n";
+    tipsHtml += "加急后= " + afterUrgent.toFixed(2) + " 元\n";
+    tipsHtml += "当前分钟= " + minute + "\n";
+    tipsHtml += "是否时间折扣 = " + (hitTime ? "是（85折）" : "否") + "\n";
+    tipsHtml += "最终金额= " + finalTotal + " 元\n";
+    document.getElementById("tips").innerText = tipsHtml;
+
+    renderTable();
+}
+
+function renderTable() {
+    if (orderList.length == 0) {
+        document.getElementById("history").innerHTML = "暂无记录";
+        return;
+    }
+
+    var html = "<table>";
+    html += "<tr><th>#</th><th>时间</th><th>客户</th><th>单价</th><th>数量</th><th>VIP</th><th>加急</th><th>分钟</th><th>金额</th></tr>";
+
+    for (var i = 0; i < orderList.length; i++) {
+        var o = orderList[i];
+        html += "<tr>";
+        html += "<td>" + (i+1) + "</td>";
+        html += "<td>" + o.time + "</td>";
+        html += "<td>" + o.name + "</td>";
+        html += "<td>" + o.price + "</td>";
+        html += "<td>" + o.qty + "</td>";
+        html += "<td>" + (o.vip?"是":"否") + "</td>";
+        html += "<td>" + (o.urgent?"是":"否") + "</td>";
+        html += "<td>" + o.minute + "</td>";
+        html += "<td>" + o.final + "</td>";
+        html += "</tr>";
+    }
+
+    html += "</table>";
+
+    document.getElementById("history").innerHTML = html;
+}
+</script>
+
+</head>
+
+<body>
+
+<h2>在线购物折扣（job5 作业）</h2>
+<p>当前时间：<span id="clock">--:--:--</span></p>
+
+客户名：<br>
+<input id="name"><br>
+
+单价：<br>
+<input id="price" type="number"><br>
+
+数量：<br>
+<input id="qty" type="number"><br>
+
+客户类型：<br>
+<select id="vip">
+  <option value="false">普通用户</option>
+  <option value="true">VIP</option>
+</select><br>
+
+<label>
+  <input type="checkbox" id="urgent"> 加急（+10%）
+</label><br><br>
+
+<button onclick="addOrder()">添加订单</button>
+
+<h3>计算过程</h3>
+<pre id="tips"></pre>
+
+<h3>订单历史</h3>
+<div id="history">暂无记录</div>
+
+</body>
+</html>
